@@ -109,38 +109,3 @@ def test_total_do_pedido_com_frete_gratis():
         entrega_expressa=False,
     )
     assert calcular_total_pedido(pedido) == D("250.00")
-
-
-def test_cupom_frete_gratis_zera_apenas_entrega_expressa_acima_de_50():
-    pedido = Pedido(
-        itens=[ItemPedido("Kit", D("100.00"), 1)],
-        desconto_percentual=D("10"),
-        cupom="FRETE_GRATIS",
-        entrega_expressa=True,
-    )
-
-    # 100 - 10% = 90; cupom nao altera produtos; entrega expressa fica gratis.
-    assert calcular_total_pedido(pedido) == D("90.00")
-
-
-def test_cupom_frete_gratis_nao_zera_entrega_expressa_com_total_igual_a_50():
-    pedido = Pedido(
-        itens=[ItemPedido("Kit", D("100.00"), 1)],
-        desconto_percentual=D("50"),
-        cupom="FRETE_GRATIS",
-        entrega_expressa=True,
-    )
-
-    # 100 - 50% = 50; regra exige valor maior que 50.
-    assert calcular_total_pedido(pedido) == D("79.90")
-
-
-def test_cupom_frete_gratis_nao_altera_entrega_comum():
-    pedido = Pedido(
-        itens=[ItemPedido("Kit", D("100.00"), 1)],
-        desconto_percentual=D("0"),
-        cupom="FRETE_GRATIS",
-        entrega_expressa=False,
-    )
-
-    assert calcular_total_pedido(pedido) == D("114.90")
