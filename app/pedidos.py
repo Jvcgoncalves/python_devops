@@ -88,10 +88,17 @@ def tem_cupom_frete(cupom: str | None) -> bool:
     return cupom.strip().upper() == "FRETE_GRATIS"
 
 def calcular_total_pedido(pedido: Pedido) -> Decimal:
-    tem_cupom_de_frete = tem_cupom_frete(pedido.cupom)
     subtotal = calcular_subtotal(pedido.itens)
     apos_desconto = aplicar_desconto_percentual(subtotal, pedido.desconto_percentual)
     cupom_percentual = percentual_do_cupom(pedido.cupom)
     apos_cupom = aplicar_desconto_percentual(apos_desconto, cupom_percentual)
     frete = calcular_frete(apos_cupom, pedido.entrega_expressa)
+
+    if (
+        tem_cupom_frete(pedido.cupom)
+        and pedido.entrega_expressa
+        and apos_desconto > Decimal("50.00")
+    ):
+        frete = Decimal("0.00")
+
     return dinheiro(apos_cupom + frete)
